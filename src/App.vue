@@ -9,7 +9,7 @@
             >
             <div class="mt-1 relative rounded-md shadow-md">
               <input
-                  @keydown.enter="addCoin"
+                  @keydown.enter="addCoin(inptname)"
                   v-model='inptname'
                   type="text"
                   name="wallet"
@@ -18,10 +18,11 @@
                   placeholder="Например DOGE"
               />
             </div>
-            <div v-show="inptarr.length" class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap">
+            <div v-show="this.inptname.length" class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap">
             <span
-                v-for="(el,idx) in inptarr"
+                v-for="(el,idx) in filterArr"
                 :key="idx"
+                @click="addCoin(el)"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer">
               {{ el }}
             </span>
@@ -32,7 +33,7 @@
           </div>
         </div>
         <button
-            @click="addCoin"
+            @click="addCoin(inptname)"
             type="button"
             class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
@@ -53,7 +54,7 @@
         </button>
       </section>
 
-      <hr class="w-full border-t border-gray-600 my-4"/>
+      <hr v-show="this.listarr.length" class="w-full border-t border-gray-600 my-4"/>
       <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
         <div v-for="(el,idx) in listarr"
              :key="idx"
@@ -91,52 +92,52 @@
         </div>
 
       </dl>
-      <hr class="w-full border-t border-gray-600 my-4"/>
-      <section class="relative">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
-          VUE - USD
-        </h3>
-        <div class="flex items-end border-gray-600 border-b border-l h-64">
-          <div
-              class="bg-purple-800 border w-10 h-24"
-          ></div>
-          <div
-              class="bg-purple-800 border w-10 h-32"
-          ></div>
-          <div
-              class="bg-purple-800 border w-10 h-48"
-          ></div>
-          <div
-              class="bg-purple-800 border w-10 h-16"
-          ></div>
-        </div>
-        <button
-            type="button"
-            class="absolute top-0 right-0"
-        >
-          <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              xmlns:svgjs="http://svgjs.com/svgjs"
-              version="1.1"
-              width="30"
-              height="30"
-              x="0"
-              y="0"
-              viewBox="0 0 511.76 511.76"
-              style="enable-background:new 0 0 512 512"
-              xml:space="preserve"
-          >
-          <g>
-            <path
-                d="M436.896,74.869c-99.84-99.819-262.208-99.819-362.048,0c-99.797,99.819-99.797,262.229,0,362.048    c49.92,49.899,115.477,74.837,181.035,74.837s131.093-24.939,181.013-74.837C536.715,337.099,536.715,174.688,436.896,74.869z     M361.461,331.317c8.341,8.341,8.341,21.824,0,30.165c-4.16,4.16-9.621,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251    l-75.413-75.435l-75.392,75.413c-4.181,4.16-9.643,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251    c-8.341-8.341-8.341-21.845,0-30.165l75.392-75.413l-75.413-75.413c-8.341-8.341-8.341-21.845,0-30.165    c8.32-8.341,21.824-8.341,30.165,0l75.413,75.413l75.413-75.413c8.341-8.341,21.824-8.341,30.165,0    c8.341,8.32,8.341,21.824,0,30.165l-75.413,75.413L361.461,331.317z"
-                fill="#718096"
-                data-original="#000000"
-            ></path>
-          </g>
-        </svg>
-        </button>
-      </section>
+      <hr v-show="this.listarr.length" class="w-full border-t border-gray-600 my-4"/>
+<!--      <section class="relative">-->
+<!--        <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">-->
+<!--          VUE - USD-->
+<!--        </h3>-->
+<!--        <div class="flex items-end border-gray-600 border-b border-l h-64">-->
+<!--          <div-->
+<!--              class="bg-purple-800 border w-10 h-24"-->
+<!--          ></div>-->
+<!--          <div-->
+<!--              class="bg-purple-800 border w-10 h-32"-->
+<!--          ></div>-->
+<!--          <div-->
+<!--              class="bg-purple-800 border w-10 h-48"-->
+<!--          ></div>-->
+<!--          <div-->
+<!--              class="bg-purple-800 border w-10 h-16"-->
+<!--          ></div>-->
+<!--        </div>-->
+<!--        <button-->
+<!--            type="button"-->
+<!--            class="absolute top-0 right-0"-->
+<!--        >-->
+<!--          <svg-->
+<!--              xmlns="http://www.w3.org/2000/svg"-->
+<!--              xmlns:xlink="http://www.w3.org/1999/xlink"-->
+<!--              xmlns:svgjs="http://svgjs.com/svgjs"-->
+<!--              version="1.1"-->
+<!--              width="30"-->
+<!--              height="30"-->
+<!--              x="0"-->
+<!--              y="0"-->
+<!--              viewBox="0 0 511.76 511.76"-->
+<!--              style="enable-background:new 0 0 512 512"-->
+<!--              xml:space="preserve"-->
+<!--          >-->
+<!--          <g>-->
+<!--            <path-->
+<!--                d="M436.896,74.869c-99.84-99.819-262.208-99.819-362.048,0c-99.797,99.819-99.797,262.229,0,362.048    c49.92,49.899,115.477,74.837,181.035,74.837s131.093-24.939,181.013-74.837C536.715,337.099,536.715,174.688,436.896,74.869z     M361.461,331.317c8.341,8.341,8.341,21.824,0,30.165c-4.16,4.16-9.621,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251    l-75.413-75.435l-75.392,75.413c-4.181,4.16-9.643,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251    c-8.341-8.341-8.341-21.845,0-30.165l75.392-75.413l-75.413-75.413c-8.341-8.341-8.341-21.845,0-30.165    c8.32-8.341,21.824-8.341,30.165,0l75.413,75.413l75.413-75.413c8.341-8.341,21.824-8.341,30.165,0    c8.341,8.32,8.341,21.824,0,30.165l-75.413,75.413L361.461,331.317z"-->
+<!--                fill="#718096"-->
+<!--                data-original="#000000"-->
+<!--            ></path>-->
+<!--          </g>-->
+<!--        </svg>-->
+<!--        </button>-->
+<!--      </section>-->
     </div>
   </div>
 </template>
@@ -147,7 +148,7 @@ export default {
   name: 'App',
   data() {
     return {
-      inptname: null,
+      inptname: '',
       inptprice: null,
       listarr: [],
       inptarr: [],
@@ -155,17 +156,22 @@ export default {
     }
   },
   methods: {
-    addCoin: function () {
+    addCoin: function (elem) {
+
       let listobj = {
         coin: '',
         price: 'loading'
       };
 
-      this.inptname = this.inptname.toUpperCase().trim()
+      this.inptname = elem.toUpperCase().trim()
       let url = `https://min-api.cryptocompare.com/data/price?fsym=${this.inptname}&tsyms=USD&e=Coinbase&extraParams=3e36cfcc18536f2ccf8b8e66e4cd8b8db649a09338c7bbba4b3b33bf390be6c2`;
-      if (this.inptname.length && !this.inptarr.includes(this.inptname)) {
 
-        this.inptarr.push(this.inptname)
+
+
+
+
+      if (this.inptname.length && !this.listarr.find(el => el.coin === this.inptname)) {
+
         listobj.coin = this.inptname
         this.listarr.push(listobj)
 
@@ -173,22 +179,46 @@ export default {
         setInterval(async () => {
           let prom = await fetch(url);
           let jsonProm = await prom.json();
-          this.inptprice = jsonProm;
-          this.listarr.find(el => el.coin === listobj.coin).price = this.inptprice.USD
+          this.listarr.find(el => el.coin === listobj.coin).price = jsonProm.USD
         }, 5000)
-
 
         this.inptname = ""
         this.inptnameError = ""
-      } else if (this.inptname.length) {
+      } else if (this.listarr.find(el => el.coin === this.inptname) ) {
         this.inptnameError = "Такой тикер уже добавлен"
+      } else {
+        this.inptnameError = "Пустое поле"
       }
     },
-    deleteItem: function (item){
-      this.listarr = this.listarr.filter((elem,idx) => idx != item)
-      this.inptarr = this.inptarr.filter((elem,idx)=>idx != item)
+    deleteItem: function (item) {
+      this.listarr = this.listarr.filter((elem, idx) => idx != item)
     }
 
+  },
+  computed: {
+    filterArr: function () {
+      let filterArr = this.inptarr;
+      filterArr = filterArr.filter(el => el.includes(`${this.inptname.toUpperCase().trim()}`))
+      return filterArr.slice(0,10)
+    },
+
+
+  },
+
+  watch() {
+
+  },
+  created() {
+    (async () => {
+      let url = 'https://min-api.cryptocompare.com/data/all/coinlist?summary=true'
+      let fetchCoins = await fetch(url);
+      let jsonCoins = await fetchCoins.json();
+      let objCoins = Object.keys(jsonCoins.Data)
+      objCoins.join(',')
+      this.inptarr = objCoins
+    })()
   }
 }
 </script>
+
+
