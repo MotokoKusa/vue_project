@@ -28,8 +28,6 @@
 
       <ACryptoLine v-show="listCards.length"/>
       <!--      <SCryptoGraph/>-->
-
-      {{ cryptoData }}
     </div>
   </div>
 </template>
@@ -58,7 +56,7 @@ export default {
       error: 'Такой тикер уже добавлен',
       inputName: 'Например BTC',
       inputValue: '',
-      cryptoData: [],
+      cryptoData: null,
       listInput: [],
       listCards: [],
     }
@@ -93,16 +91,22 @@ export default {
       return this.listCards.map(el => el.coin).join(',')
     },
     updateList() {
-      if (this.cryptoData.length) {
-        return this.listCards.map(el => el.cost = this.cryptoData[el.coin].USD)
-      } else {
-        return this.listCards
-      }
+
+      return this.listCards.map(el => {
+        if (this.cryptoData !== null && this.cryptoData[el.coin]) {
+          el.cost = this.cryptoData[el.coin].USD
+          return el
+        } else {
+          el.cost = '-'
+          return el
+        }
+      })
+
     },
 
   },
   mounted() {
-    setInterval( async () => this.cryptoData = await getCryptoData(this.stringCoins), 3000)
+    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins), 3000)
   }
 }
 </script>
