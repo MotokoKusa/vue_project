@@ -7,7 +7,7 @@
         {{ coin }} - {{ money }}
       </dt>
       <dd class="mt-1 text-3xl font-semibold text-gray-900">
-       {{ cost }}
+        {{ cost }}
       </dd>
     </div>
     <div class="w-full border-t border-gray-200"></div>
@@ -38,20 +38,12 @@
 <script>
 export default {
   name: "ACryptoCard",
-  props: {
-    coin: {
-      type: String,
-    },
-    money: {
-      type: String,
-    },
-    cost: {
-      type: String,
-    }
-  },
-  methods:{
-    deleteCardCLick(){
-      this.$emit('deleteCard',this.coin)
+  props: ['coin', 'money', 'cost']
+
+  ,
+  methods: {
+    deleteCardCLick() {
+      this.$emit('deleteCard', this.coin)
     }
   }
 }

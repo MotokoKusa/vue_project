@@ -1,10 +1,10 @@
 <template>
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div class="container">
-      <section>
+      <div>
         <div class="flex">
           <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+            <label for="wallet" class="block text-sm font-medium text-gray-700">{{ label.title }}</label>
             <input
                 type="text"
                 name="wallet"
@@ -12,20 +12,36 @@
                 class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
                 :placeholder="inputName"
                 v-model.trim="inputValue"
-                @keydown.enter="addCard()"
+                @keydown.enter="addCard(this.transformValue)"
             />
-            <ACryptoList v-show="listCards.length" :list="listCards"/>
+            <ACryptoList v-show="this.filterListCoins.length" @addClickCoin="addClickCoin" :list="filterListCoins"/>
             <div v-show="includeCards" class="text-sm text-red-600">{{ error }}</div>
           </div>
         </div>
-        <ACryptoBtn @click="addCard()" :txt="txt"/>
-      </section>
+        <ACryptoBtn @click="addCard(this.transformValue)" :txt="txt" />
+      </div>
+
+
+      <div class=" pt-6 pb-6">
+        <label for="wallet" class="block text-sm font-medium text-gray-700">{{ label.title }}</label>
+        <div class="max-w-xs">
+          <input
+              type="text"
+              name="wallet"
+
+              class="block pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+          />
+        </div>
+        <label for="wallet" class="block mt-6 text-sm font-medium text-gray-700">{{ label.page }}</label>
+        <div class="max-w-xs flex ">
+          <ACryptoBtn :txt="page.down"/>
+          <ACryptoBtn :txt="page.up"/>
+        </div>
+      </div>
+
 
       <ACryptoLine v-show="listCards.length"/>
-
       <MCryptoCards @deleteCard="deleteCard" :listCards="updateList"/>
-
-
       <ACryptoLine v-show="listCards.length"/>
       <!--      <SCryptoGraph/>-->
     </div>
@@ -38,6 +54,7 @@ import ACryptoList from "@/components/atoms/a_crypto_list/a_crypto_list";
 import MCryptoCards from "@/components/molecule/m_crypto_cards/m_crypto_cards";
 import ACryptoLine from "@/components/atoms/a_crypto_line/a_crypto_line";
 import getCryptoData from './api/getCryptoData'
+import getCryptoCoins from "@/api/getCryptoCoins";
 // import MCryptoGraph from "@/components/m_crypto_graph/m_crypto_graph";
 
 export default {
@@ -51,20 +68,27 @@ export default {
   },
   data() {
     return {
-      label: 'Тикер',
-      txt: 'Добавить',
-      error: 'Такой тикер уже добавлен',
-      inputName: 'Например BTC',
+      label: {
+        title:'Write Crypto-coin',
+        page: 'Pages'
+      } ,
+      txt: 'add',
+      error: 'This ticker has already been added',
+      inputName: 'For example BTC',
       inputValue: '',
       cryptoData: null,
       listInput: [],
       listCards: [],
+      page: {
+        up:'next',
+        down:'prev'
+      }
     }
   },
   methods: {
-    addCard() {
+    addCard(nameCoin) {
       let card = {
-        coin: this.transformValue,
+        coin: nameCoin,
         money: 'USD',
         cost: 'loading'
       };
@@ -77,6 +101,13 @@ export default {
     deleteCard(name) {
       this.listCards = this.listCards.filter(el => el.coin !== name)
     },
+    addClickCoin(coin) {
+      this.addCard(coin)
+    },
+    async listCoins() {
+      this.listInput = await getCryptoCoins(this.listInput)
+      return this.listInput = Object.keys(this.listInput)
+    }
 
 
   },
@@ -91,7 +122,6 @@ export default {
       return this.listCards.map(el => el.coin).join(',')
     },
     updateList() {
-
       return this.listCards.map(el => {
         if (this.cryptoData !== null && this.cryptoData[el.coin]) {
           el.cost = this.cryptoData[el.coin].USD
@@ -101,12 +131,20 @@ export default {
           return el
         }
       })
-
     },
+    filterListCoins() {
+      if (this.inputValue) {
+        return this.listInput.filter(el => el.includes(this.transformValue)).slice(0, 10)
+      } else {
+        return []
+      }
+
+    }
 
   },
   mounted() {
-    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins), 3000)
+    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins), 5000);
+    this.listCoins()
   }
 }
 </script>
