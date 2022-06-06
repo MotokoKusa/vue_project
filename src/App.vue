@@ -18,11 +18,11 @@
             <div v-show="includeCards" class="text-sm text-red-600">{{ error }}</div>
           </div>
         </div>
-        <ACryptoBtn @click="addCard(this.transformValue)" :txt="txt" />
+        <ACryptoBtn @click="addCard(this.transformValue)" :disabled="!this.transformValue"  :txt="txt"/>
       </div>
 
 
-      <div class=" pt-6 pb-6">
+      <div class=" pt-6 pb-6 ">
         <label for="wallet" class="block text-sm font-medium text-gray-700">{{ label.title }}</label>
         <div class="max-w-xs">
           <input
@@ -32,16 +32,20 @@
               class="block pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
           />
         </div>
-        <label for="wallet" class="block mt-6 text-sm font-medium text-gray-700">{{ label.page }}</label>
-        <div class="max-w-xs flex ">
-          <ACryptoBtn :txt="page.down"/>
-          <ACryptoBtn :txt="page.up"/>
+        <div v-show="this.listCards.length">
+          <label for="wallet" class="block mt-6 text-sm font-medium text-gray-700">{{ label.page }}
+            {{ page.count }}</label>
+          <div class="max-w-xs flex ">
+            <ACryptoBtn v-show="page.count - 1 " @click="page.count--" :txt="page.down"/>
+            <ACryptoBtn v-show="page.count * 3 < this.listCards.length && this.listCards.length" @click="page.count++"
+                        :txt="page.up"/>
+          </div>
         </div>
       </div>
 
 
       <ACryptoLine v-show="listCards.length"/>
-      <MCryptoCards @deleteCard="deleteCard" :listCards="updateList"/>
+      <MCryptoCards @deleteCard="deleteCard" :listCards="filterListPages"/>
       <ACryptoLine v-show="listCards.length"/>
       <!--      <SCryptoGraph/>-->
     </div>
@@ -69,9 +73,9 @@ export default {
   data() {
     return {
       label: {
-        title:'Write Crypto-coin',
-        page: 'Pages'
-      } ,
+        title: 'Write Crypto-coin',
+        page: 'Page'
+      },
       txt: 'add',
       error: 'This ticker has already been added',
       inputName: 'For example BTC',
@@ -80,8 +84,9 @@ export default {
       listInput: [],
       listCards: [],
       page: {
-        up:'next',
-        down:'prev'
+        up: 'next',
+        down: 'prev',
+        count: 1
       }
     }
   },
@@ -138,12 +143,14 @@ export default {
       } else {
         return []
       }
-
+    },
+    filterListPages() {
+      return this.updateList.slice((this.page.count - 1) * 3, this.page.count * 3)
     }
 
   },
   mounted() {
-    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins), 5000);
+    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins), 15000);
     this.listCoins()
   }
 }
