@@ -167,7 +167,6 @@ export default {
     },
     filterListCoins() {
       if (this.inputValue) {
-        console.log(this.transformValue.length)
         return this.listInput.filter(el => el.substr(0,this.transformValue.length) === this.transformValue).slice(0, 30)
       } else {
         return []
@@ -186,7 +185,7 @@ export default {
 
   },
   mounted() {
-    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins,this.api.key), 15000);
+    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins,this.api.key), 5000);
     this.listCoins()
   }
 }
