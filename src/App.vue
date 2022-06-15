@@ -167,7 +167,8 @@ export default {
     },
     filterListCoins() {
       if (this.inputValue) {
-        return this.listInput.filter(el => el.includes(this.transformValue)).slice(0, 10)
+        console.log(this.transformValue.length)
+        return this.listInput.filter(el => el.substr(0,this.transformValue.length) === this.transformValue).slice(0, 30)
       } else {
         return []
       }
