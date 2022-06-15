@@ -96,7 +96,7 @@ export default {
         example:'For example - 3e36cfcc18536f2ccf8b8e66e4cd8b8db649a09338c7bbba4b3b33bf390be6c2',
         link: 'https://min-api.cryptocompare.com/',
         btn: 'add API',
-        key: '3e36cfcc18536f2ccf8b8e66e4cd8b8db649a09338c7bbba4b3b33bf390be6c2',
+        key: '',
         value: ''
       },
       txt: 'add',
