@@ -1,10 +1,24 @@
 <template>
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div class="container">
-      <div>
+      <div v-if="!api.key.length" class="pt-6 pb-6">
+        <a :href="api.link" class="block text-sm mb-2 font-medium text-gray-700">{{ api.title }}</a>
+        <p class="block text-sm pb-2 font-medium text-gray-700"> {{ api.example}}</p>
+        <div class="max-w-xs">
+          <input
+              v-model="api.value"
+              type="text"
+              name="wallet"
+              class="block pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+          />
+        </div>
+        <ACryptoBtn @click="api.key = api.value" :txt="api.btn"/>
+      </div>
+
+      <div v-if="api.key.length">
         <div class="flex">
           <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700">{{ label.title }}</label>
+            <label for="wallet" class="block text-sm pb-2 font-medium text-gray-700">{{ label.title }}</label>
             <input
                 type="text"
                 name="wallet"
@@ -18,21 +32,22 @@
             <div v-show="includeCards" class="text-sm text-red-600">{{ error }}</div>
           </div>
         </div>
-        <ACryptoBtn @click="addCard(this.transformValue)" :disabled="!this.transformValue"  :txt="txt"/>
+        <ACryptoBtn @click="addCard(this.transformValue)" :disabled="!this.transformValue" :txt="txt"/>
       </div>
 
 
-      <div class=" pt-6 pb-6 ">
-        <label for="wallet" class="block text-sm font-medium text-gray-700">{{ label.title }}</label>
+      <div v-if="api.key.length" class=" pt-6 pb-6 ">
+        <label for="wallet" class="block text-sm pb-2 font-medium text-gray-700">{{ label.title }}</label>
         <div class="max-w-xs">
           <input
               type="text"
               name="wallet"
+              v-model.trim="filterValue"
 
               class="block pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
           />
         </div>
-        <div v-show="this.listCards.length">
+        <div v-show="this.listCards.length && !this.filterValue.length">
           <label for="wallet" class="block mt-6 text-sm font-medium text-gray-700">{{ label.page }}
             {{ page.count }}</label>
           <div class="max-w-xs flex ">
@@ -74,12 +89,21 @@ export default {
     return {
       label: {
         title: 'Write Crypto-coin',
-        page: 'Page'
+        page: 'Page',
+      },
+      api: {
+        title: 'Add API_KEY from https://min-api.cryptocompare.com/',
+        example:'For example - 3e36cfcc18536f2ccf8b8e66e4cd8b8db649a09338c7bbba4b3b33bf390be6c2',
+        link: 'https://min-api.cryptocompare.com/',
+        btn: 'add API',
+        key: '',
+        value: ''
       },
       txt: 'add',
       error: 'This ticker has already been added',
       inputName: 'For example BTC',
       inputValue: '',
+      filterValue: '',
       cryptoData: null,
       listInput: [],
       listCards: [],
@@ -124,7 +148,11 @@ export default {
       return this.listCards.find(el => el.coin === this.transformValue)
     },
     stringCoins() {
-      return this.listCards.map(el => el.coin).join(',')
+      if (this.listCards) {
+        return this.listCards.map(el => el.coin).join(',')
+      } else {
+        return null
+      }
     },
     updateList() {
       return this.listCards.map(el => {
@@ -144,13 +172,20 @@ export default {
         return []
       }
     },
+
+
     filterListPages() {
-      return this.updateList.slice((this.page.count - 1) * 3, this.page.count * 3)
+      if (this.filterValue) {
+        return this.updateList.filter(el => el.coin.includes(this.filterValue.toUpperCase().trim()))
+      } else {
+        return this.updateList.slice((this.page.count - 1) * 3, this.page.count * 3)
+      }
+
     }
 
   },
   mounted() {
-    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins), 15000);
+    setInterval(async () => this.cryptoData = await getCryptoData(this.stringCoins,this.api.key), 15000);
     this.listCoins()
   }
 }
